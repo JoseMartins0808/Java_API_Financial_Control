@@ -21,7 +21,7 @@ public class Transaction {
     @JoinColumn(nullable = false, referencedColumnName = "id")
     private User payee;
 
-    @Column(nullable = false, columnDefinition = "DECIMAL")
+    @Column(nullable = false, columnDefinition = "DECIMAL(9,2)")
     private float value;
 
     @CreationTimestamp

@@ -65,8 +65,6 @@ public class UserService {
 
         final float currentBalance = userFound.getBalance();
 
-        System.out.println("VALOR ANTIGO: " + currentBalance);
-
         userFound.setBalance(currentBalance + depositData.getDepositValue());
 
         return userRepository.save(userFound);

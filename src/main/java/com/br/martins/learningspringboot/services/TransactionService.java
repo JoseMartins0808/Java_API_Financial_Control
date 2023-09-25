@@ -28,6 +28,15 @@ public class TransactionService {
         final User userPayee = userRepository.findById(transactionData.getPayee_id()).orElseThrow(() ->
             new Exception("User not found"));
 
+        final float currentPayerBalance = userPayer.getBalance();
+        final float currentPayeeBalance = userPayee.getBalance();
+
+        userPayer.setBalance(currentPayerBalance - transactionData.getTransaction_value());
+        userPayee.setBalance(currentPayeeBalance + transactionData.getTransaction_value());
+
+        userRepository.save(userPayer);
+        userRepository.save(userPayee);
+
         final Transaction newTransaction = new Transaction(userPayer, userPayee, transactionData.getTransaction_value());
 
         return transactionRepository.save(newTransaction);

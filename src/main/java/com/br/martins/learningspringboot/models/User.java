@@ -87,7 +87,6 @@ public class User {
 
     public float getBalance() {
 
-        System.out.println("MODEL: " + balance);
         return balance;
     }
 
