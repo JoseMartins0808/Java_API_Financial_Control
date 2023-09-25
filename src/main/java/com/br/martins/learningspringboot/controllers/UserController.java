@@ -1,5 +1,7 @@
 package com.br.martins.learningspringboot.controllers;
 
+import com.br.martins.learningspringboot.dto.CreateDepositDto;
+import com.br.martins.learningspringboot.dto.UserDto;
 import com.br.martins.learningspringboot.models.User;
 import com.br.martins.learningspringboot.services.UserService;
 import org.springframework.http.HttpStatus;
@@ -19,7 +21,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser (@RequestBody final User userData) {
+    public ResponseEntity<User> createUser (@RequestBody final UserDto userData) {
 
         final User newUser = userService.createUser(userData);
 
@@ -44,7 +46,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser (@PathVariable final String id,
-        @RequestBody final User updateData) throws Exception {
+        @RequestBody final UserDto updateData) throws Exception {
 
             final User userUpdated = userService.updateUser(updateData, Long.parseLong(id));
 
@@ -57,5 +59,14 @@ public class UserController {
         userService.deleteUser(Long.parseLong(id));
 
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/{userId}/deposit")
+    public ResponseEntity<User> createDeposit (@RequestBody final CreateDepositDto depositData,
+        @PathVariable final String userId) throws Exception {
+
+        final User newDeposit = userService.createDeposit(depositData, userId);
+
+        return new ResponseEntity<User>(newDeposit, HttpStatus.CREATED);
     }
 }

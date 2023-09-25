@@ -23,7 +23,7 @@ public class User {
     @Column(length = 6, nullable = false)
     private String type;
 
-    @Column(columnDefinition = "DECIMAL DEFAULT 0.0")
+    @Column(columnDefinition = "DECIMAL(9,2) DEFAULT 0.0")
     private float balance;
 
     public User () {
@@ -86,6 +86,8 @@ public class User {
     }
 
     public float getBalance() {
+
+        System.out.println("MODEL: " + balance);
         return balance;
     }
 
