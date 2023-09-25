@@ -33,4 +33,29 @@ public class UserController {
 
         return new ResponseEntity<List<User>>(allUsers, HttpStatus.OK);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<User> retrieveUser (@PathVariable final String id) throws Exception {
+
+        final User userFound = userService.retrieveUser(Long.parseLong(id));
+
+        return new ResponseEntity<User>(userFound, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser (@PathVariable final String id,
+        @RequestBody final User updateData) throws Exception {
+
+            final User userUpdated = userService.updateUser(updateData, Long.parseLong(id));
+
+            return new ResponseEntity<User>(userUpdated, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser (@PathVariable final String id) throws Exception {
+
+        userService.deleteUser(Long.parseLong(id));
+
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
 }
