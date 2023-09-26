@@ -3,6 +3,7 @@ package com.br.martins.learningspringboot.controllers;
 import com.br.martins.learningspringboot.dto.CreateTransactionDto;
 import com.br.martins.learningspringboot.models.Transaction;
 import com.br.martins.learningspringboot.services.TransactionService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +19,7 @@ public class TransactionController {
     }
 
     @PostMapping
-    public ResponseEntity<Transaction> createTransaction (@RequestBody final CreateTransactionDto transactionData)
-        throws Exception {
+    public ResponseEntity<Transaction> createTransaction (@Valid @RequestBody final CreateTransactionDto transactionData) {
 
         final Transaction createTransaction = transactionService.createTransaction(transactionData);
 
@@ -27,8 +27,7 @@ public class TransactionController {
     }
 
     @GetMapping("/{transactionId}")
-    public ResponseEntity<Transaction> retrieveTransaction (@PathVariable final String transactionId)
-        throws Exception {
+    public ResponseEntity<Transaction> retrieveTransaction (@PathVariable final String transactionId) {
 
         final Transaction transactionFound = transactionService.retrieveTransaction(Long.parseLong(transactionId));
 

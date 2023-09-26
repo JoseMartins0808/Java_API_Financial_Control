@@ -4,6 +4,7 @@ import com.br.martins.learningspringboot.dto.CreateDepositDto;
 import com.br.martins.learningspringboot.dto.UserDto;
 import com.br.martins.learningspringboot.models.User;
 import com.br.martins.learningspringboot.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser (@RequestBody final UserDto userData) {
+    public ResponseEntity<User> createUser (@Valid @RequestBody final UserDto userData) {
 
         final User newUser = userService.createUser(userData);
 
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> retrieveUser (@PathVariable final String id) throws Exception {
+    public ResponseEntity<User> retrieveUser (@PathVariable final String id) {
 
         final User userFound = userService.retrieveUser(Long.parseLong(id));
 
@@ -46,7 +47,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser (@PathVariable final String id,
-        @RequestBody final UserDto updateData) throws Exception {
+        @Valid @RequestBody final UserDto updateData) {
 
             final User userUpdated = userService.updateUser(updateData, Long.parseLong(id));
 
@@ -54,7 +55,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser (@PathVariable final String id) throws Exception {
+    public ResponseEntity<Void> deleteUser (@PathVariable final String id) {
 
         userService.deleteUser(Long.parseLong(id));
 
@@ -62,8 +63,8 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/deposit")
-    public ResponseEntity<User> createDeposit (@RequestBody final CreateDepositDto depositData,
-        @PathVariable final String userId) throws Exception {
+    public ResponseEntity<User> createDeposit (@Valid @RequestBody final CreateDepositDto depositData,
+        @PathVariable final String userId) {
 
         final User newDeposit = userService.createDeposit(depositData, userId);
 

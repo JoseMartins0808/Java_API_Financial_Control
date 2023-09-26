@@ -2,8 +2,10 @@ package com.br.martins.learningspringboot.services;
 
 import com.br.martins.learningspringboot.dto.CreateDepositDto;
 import com.br.martins.learningspringboot.dto.UserDto;
+import com.br.martins.learningspringboot.exceptions.AppException;
 import com.br.martins.learningspringboot.models.User;
 import com.br.martins.learningspringboot.repositories.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,18 +29,18 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User retrieveUser (final long id) throws Exception {
+    public User retrieveUser (final long id) {
 
         final User userFound = userRepository.findById(id).orElseThrow(() ->
-            new Exception("User not found."));
+            new AppException("User not found", HttpStatus.NOT_FOUND));
 
         return userFound;
     }
 
-    public User updateUser (final UserDto newData, final long id) throws Exception {
+    public User updateUser (final UserDto newData, final long id) {
 
         final User userFound = userRepository.findById(id).orElseThrow(() ->
-            new Exception("User not found."));
+            new AppException("User not found", HttpStatus.NOT_FOUND));
 
         userFound.setName(newData.getName());
         userFound.setCpf(newData.getCpf());
@@ -49,19 +51,18 @@ public class UserService {
         return userRepository.save(userFound);
     }
 
-    public void deleteUser (final long id) throws Exception {
+    public void deleteUser (final long id) {
 
         final User userFound = userRepository.findById(id).orElseThrow(() ->
-                new Exception("User not found."));
+                new AppException("User not found", HttpStatus.NOT_FOUND));
 
         userRepository.delete(userFound);
     }
 
-    public User createDeposit (final CreateDepositDto depositData, final String userId)
-        throws Exception {
+    public User createDeposit (final CreateDepositDto depositData, final String userId) {
 
         final User userFound = userRepository.findById(Long.parseLong(userId)).orElseThrow(() ->
-            new Exception("User not found"));
+            new AppException("User not found", HttpStatus.NOT_FOUND));
 
         final float currentBalance = userFound.getBalance();
 

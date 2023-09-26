@@ -1,13 +1,19 @@
 package com.br.martins.learningspringboot.dto;
 
 import com.br.martins.learningspringboot.models.User;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
 
 public class CreateTransactionDto {
 
+    @NotNull(message = "Payer_id cannot be null")
     private long payer_id;
 
+    @NotNull(message = "Payee_id cannot be null")
     private long payee_id;
 
+    @NotNull(message = "Transaction value cannot be null")
+    @DecimalMin(value = "0.01", message = "Transaction value must be higher than 0.01")
     private float transaction_value;
 
     public long getPayer_id() {

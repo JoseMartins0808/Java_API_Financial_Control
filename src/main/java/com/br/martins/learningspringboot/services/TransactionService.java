@@ -1,11 +1,15 @@
 package com.br.martins.learningspringboot.services;
 
 import com.br.martins.learningspringboot.dto.CreateTransactionDto;
+import com.br.martins.learningspringboot.exceptions.AppException;
 import com.br.martins.learningspringboot.models.Transaction;
 import com.br.martins.learningspringboot.models.User;
 import com.br.martins.learningspringboot.repositories.TransactionRepository;
 import com.br.martins.learningspringboot.repositories.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 public class TransactionService {
@@ -20,15 +24,24 @@ public class TransactionService {
         this.userRepository = userRepository;
     }
 
-    public Transaction createTransaction (final CreateTransactionDto transactionData) throws Exception {
+    public Transaction createTransaction (final CreateTransactionDto transactionData) {
 
         final User userPayer = userRepository.findById(transactionData.getPayer_id()).orElseThrow(() ->
-            new Exception("User not found"));
+            new AppException("User not found", HttpStatus.NOT_FOUND));
+
+        if (Objects.equals(userPayer.getType(), "SELLER")) {
+            throw new AppException("SELLER user type cannot send money", HttpStatus.FORBIDDEN);
+        }
 
         final User userPayee = userRepository.findById(transactionData.getPayee_id()).orElseThrow(() ->
-            new Exception("User not found"));
+            new AppException("User not found", HttpStatus.NOT_FOUND));
 
         final float currentPayerBalance = userPayer.getBalance();
+
+        if (currentPayerBalance < transactionData.getTransaction_value()) {
+            throw new AppException("Insufficient funds", HttpStatus.FORBIDDEN);
+        }
+
         final float currentPayeeBalance = userPayee.getBalance();
 
         userPayer.setBalance(currentPayerBalance - transactionData.getTransaction_value());
@@ -42,10 +55,10 @@ public class TransactionService {
         return transactionRepository.save(newTransaction);
     }
 
-    public Transaction retrieveTransaction (final long transactionId) throws Exception {
+    public Transaction retrieveTransaction (final long transactionId) {
 
         final Transaction transactionFound = transactionRepository.findById(transactionId).orElseThrow(() ->
-            new Exception("Transaction not found"));
+            new AppException("Transaction not found", HttpStatus.NOT_FOUND));
 
         return transactionFound;
     }
