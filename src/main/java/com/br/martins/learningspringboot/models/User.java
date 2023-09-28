@@ -1,6 +1,7 @@
 package com.br.martins.learningspringboot.models;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "users")
@@ -23,7 +24,8 @@ public class User {
     @Column(length = 6, nullable = false)
     private String type;
 
-    @Column(columnDefinition = "DECIMAL(9,2) DEFAULT 0.0")
+    @Column(columnDefinition = "DECIMAL(9,2)")
+    @ColumnDefault("0")
     private float balance;
 
     public User () {

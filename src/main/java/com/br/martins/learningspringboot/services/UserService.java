@@ -17,7 +17,20 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    private void checkCpfAndEmailRepetition (final UserDto userData) {
+
+        if (userRepository.existsUserByCpf(userData.getCpf())) {
+            throw new AppException("cpfAlreadyInUse", HttpStatus.CONFLICT);
+        }
+
+        if(userRepository.existsUserByEmail(userData.getEmail())) {
+            throw new AppException("emailAlreadyInUse", HttpStatus.CONFLICT);
+        }
+    }
+
     public User createUser (final UserDto userData) {
+
+        checkCpfAndEmailRepetition(userData);
 
         final User newUser = new User(userData.getName(), userData.getCpf(), userData.getEmail(), userData.getPassword(), userData.getType());
 
@@ -32,15 +45,17 @@ public class UserService {
     public User retrieveUser (final long id) {
 
         final User userFound = userRepository.findById(id).orElseThrow(() ->
-            new AppException("User not found", HttpStatus.NOT_FOUND));
+            new AppException("userNotFound", HttpStatus.NOT_FOUND));
 
         return userFound;
     }
 
     public User updateUser (final UserDto newData, final long id) {
 
+        checkCpfAndEmailRepetition(newData);
+
         final User userFound = userRepository.findById(id).orElseThrow(() ->
-            new AppException("User not found", HttpStatus.NOT_FOUND));
+            new AppException("userNotFound", HttpStatus.NOT_FOUND));
 
         userFound.setName(newData.getName());
         userFound.setCpf(newData.getCpf());
@@ -54,7 +69,7 @@ public class UserService {
     public void deleteUser (final long id) {
 
         final User userFound = userRepository.findById(id).orElseThrow(() ->
-                new AppException("User not found", HttpStatus.NOT_FOUND));
+                new AppException("userNotFound", HttpStatus.NOT_FOUND));
 
         userRepository.delete(userFound);
     }
@@ -62,7 +77,7 @@ public class UserService {
     public User createDeposit (final CreateDepositDto depositData, final String userId) {
 
         final User userFound = userRepository.findById(Long.parseLong(userId)).orElseThrow(() ->
-            new AppException("User not found", HttpStatus.NOT_FOUND));
+            new AppException("userNotFound", HttpStatus.NOT_FOUND));
 
         final float currentBalance = userFound.getBalance();
 

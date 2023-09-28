@@ -27,19 +27,19 @@ public class TransactionService {
     public Transaction createTransaction (final CreateTransactionDto transactionData) {
 
         final User userPayer = userRepository.findById(transactionData.getPayer_id()).orElseThrow(() ->
-            new AppException("User not found", HttpStatus.NOT_FOUND));
+            new AppException("payerNotFound", HttpStatus.NOT_FOUND));
 
         if (Objects.equals(userPayer.getType(), "SELLER")) {
-            throw new AppException("SELLER user type cannot send money", HttpStatus.FORBIDDEN);
+            throw new AppException("invalidUserType", HttpStatus.FORBIDDEN);
         }
 
         final User userPayee = userRepository.findById(transactionData.getPayee_id()).orElseThrow(() ->
-            new AppException("User not found", HttpStatus.NOT_FOUND));
+            new AppException("payeeNotFound", HttpStatus.NOT_FOUND));
 
         final float currentPayerBalance = userPayer.getBalance();
 
         if (currentPayerBalance < transactionData.getTransaction_value()) {
-            throw new AppException("Insufficient funds", HttpStatus.FORBIDDEN);
+            throw new AppException("insufficientFunds", HttpStatus.FORBIDDEN);
         }
 
         final float currentPayeeBalance = userPayee.getBalance();
@@ -58,7 +58,7 @@ public class TransactionService {
     public Transaction retrieveTransaction (final long transactionId) {
 
         final Transaction transactionFound = transactionRepository.findById(transactionId).orElseThrow(() ->
-            new AppException("Transaction not found", HttpStatus.NOT_FOUND));
+            new AppException("transactionNotFound", HttpStatus.NOT_FOUND));
 
         return transactionFound;
     }

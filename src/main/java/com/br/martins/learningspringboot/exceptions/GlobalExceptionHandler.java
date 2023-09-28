@@ -1,5 +1,6 @@
 package com.br.martins.learningspringboot.exceptions;
 
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -17,6 +18,12 @@ import java.util.List;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private final MessageSource message;
+
+    public GlobalExceptionHandler(MessageSource messageSource) {
+        this.message = messageSource;
+    }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid (final MethodArgumentNotValidException error,
@@ -41,20 +48,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<Object> (returningObjectError, HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler({AppException.class})
-    public ResponseEntity<Object> handleAppError (final AppException error) {
+    public ResponseEntity<Object> handleAppError (final AppException error, final WebRequest request) {
 
         final HashMap<String, String> returningErrorObject = new HashMap<String, String>();
-        returningErrorObject.put("message", error.getMessage());
+        returningErrorObject.put("message", message.getMessage("message." + error.getMessage(), null,
+            request.getLocale()));
 
         return new ResponseEntity<Object>(returningErrorObject, error.getStatusCode());
     }
 
 
     @ExceptionHandler({Exception.class})
-    public ResponseEntity<Object> handleInternalError (final RuntimeException error) {
+    public ResponseEntity<Object> handleInternalError (final RuntimeException error, final WebRequest request) {
 
         final HashMap<String, String> returningErrorObject = new HashMap<String, String>();
-        returningErrorObject.put("message", "Internal server error");
+        returningErrorObject.put("message", message.getMessage("message.error", null,
+                request.getLocale()));
 
         System.out.println(error.getMessage());
 
